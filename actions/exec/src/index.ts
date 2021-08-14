@@ -12,7 +12,9 @@ const run_cmd = async () => {
 			const cmd = line.split(/\s/);
 			return `${chroot_dir}/enter-chroot -u ${user} ${cmd}`;
 		});
+		console.log(lines);
 		for (const cmd in cmds) {
+			console.log(cmd);
 			await exec.exec(cmd)
 		}
 	} catch (error) {
