@@ -20,7 +20,7 @@ inputs:
   mount:
     required: false
     description: 'mount this directory in chroot'
-    default: '$PWD/alpine'
+    default: '$PWD'
 runs:
   using: 'node12'
   main: 'dist/index.js'

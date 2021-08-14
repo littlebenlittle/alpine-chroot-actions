@@ -7,7 +7,7 @@ import { promisify } from "util";
 
 const chmod = promisify(promises.chmod);
 
-const packages = core.getInput("packages");
+const packages = core.getInput("packages").split(/\s/);
 const version = core.getInput("version");
 const mount = core.getInput("mount");
 const arch = core.getInput("arch");
@@ -28,7 +28,7 @@ const install = async () => {
 };
 
 const run = async () => {
-	const chroot = await cache.restoreCache([`${chroot_dir}`], `alpine-chroot: ${packages}`);
+	const chroot = await cache.restoreCache([`${chroot_dir}`], `alpine-chroot: ${packages.join(" ")}`);
 	if (!chroot) {
 		await install()
 	}
