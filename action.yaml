@@ -5,14 +5,14 @@ inputs:
   packages:
     required: false
     description: 'additional packages to install in chroot'
-  version:
+  alpine_version:
     required: false
     description: 'alpine linux version to use'
     default: '0.13.0'
   arch:
     required: false
     description: 'architecture'
-    default: '$PWD'
+    default: 'x86_64'
   chroot_dir:
     required: false
     description: 'root dir for chroot environment'
