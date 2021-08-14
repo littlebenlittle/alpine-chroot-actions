@@ -1,7 +1,21 @@
 import * as tc from "@actions/tool-cache";
 import * as exec from '@actions/exec';
 import * as core from '@actions/core';
-import { exists, chmod, chroot_exec, chroot_dir, user } from ".";
+
+import promises from "fs";
+import { promisify } from "util";
+
+const chmod = promisify(promises.chmod);
+const exists = promisify(promises.exists);
+const chroot_dir = core.getInput("chroot_dir");
+const user = core.getInput("user");
+
+const chroot_exec = async (user: string = "user", cmd: string[] = []): Promise<number> => {
+	if (user !== "root") {
+		cmd = ["-u", user, ...cmd];
+	}
+	return await exec.exec(`${chroot_dir}/enter-chroot`, cmd);
+};
 
 const packages = core.getInput("packages").split(/\s/);
 const alpine_version = core.getInput("alpine_version");

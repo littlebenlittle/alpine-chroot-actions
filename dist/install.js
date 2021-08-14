@@ -27,31 +27,45 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const tc = __importStar(require("@actions/tool-cache"));
 const exec = __importStar(require("@actions/exec"));
 const core = __importStar(require("@actions/core"));
-const _1 = require(".");
+const fs_1 = __importDefault(require("fs"));
+const util_1 = require("util");
+const chmod = util_1.promisify(fs_1.default.chmod);
+const exists = util_1.promisify(fs_1.default.exists);
+const chroot_dir = core.getInput("chroot_dir");
+const user = core.getInput("user");
+const chroot_exec = (user = "user", cmd = []) => __awaiter(void 0, void 0, void 0, function* () {
+    if (user !== "root") {
+        cmd = ["-u", user, ...cmd];
+    }
+    return yield exec.exec(`${chroot_dir}/enter-chroot`, cmd);
+});
 const packages = core.getInput("packages").split(/\s/);
 const alpine_version = core.getInput("alpine_version");
 const mount = core.getInput("mount");
 const arch = core.getInput("arch");
 const install = () => __awaiter(void 0, void 0, void 0, function* () {
-    if (yield _1.exists(_1.chroot_dir)) {
+    if (yield exists(chroot_dir)) {
         console.log("chroot_dir already exists; not doing anything!");
         return;
     }
     const installer = yield tc.downloadTool(`https://raw.githubusercontent.com/alpinelinux/alpine-chroot-install/v${alpine_version}/alpine-chroot-install`);
-    yield _1.chmod(installer, 0o755);
+    yield chmod(installer, 0o755);
     yield exec.exec("mkdir", ["-p", mount]);
     yield exec.exec("sudo", [
         installer,
         "-a", arch,
-        "-d", _1.chroot_dir,
+        "-d", chroot_dir,
         "-i", mount,
     ]);
-    yield _1.chroot_exec("root", ["apk", "add", ...packages]);
-    yield _1.chroot_exec("root", ["adduser", "-D", _1.user]);
+    yield chroot_exec("root", ["apk", "add", ...packages]);
+    yield chroot_exec("root", ["adduser", "-D", user]);
 });
 try {
     install();

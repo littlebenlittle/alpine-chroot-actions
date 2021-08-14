@@ -29,13 +29,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(require("@actions/core"));
-const _1 = require(".");
+const exec = __importStar(require("@actions/exec"));
+const chroot_dir = core.getInput("chroot_dir");
+const user = core.getInput("user");
 const raw_cmd = core.getInput("cmd");
+const chroot_exec = (user = "user", cmd = []) => __awaiter(void 0, void 0, void 0, function* () {
+    if (user !== "root") {
+        cmd = ["-u", user, ...cmd];
+    }
+    return yield exec.exec(`${chroot_dir}/enter-chroot`, cmd);
+});
 const run_cmd = () => __awaiter(void 0, void 0, void 0, function* () {
     const lines = raw_cmd.split(/\n/);
     lines.forEach(line => {
         const cmd = line.split(/\s/);
-        _1.chroot_exec(_1.user, cmd);
+        chroot_exec(user, cmd);
     });
 });
 try {
