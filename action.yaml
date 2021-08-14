@@ -1,0 +1,26 @@
+name: 'Alpine Chroot Install'
+description: 'install alpine linux in chroot using alpine-chroot-install'
+author: 'ben little <ben.little@benlittle.dev>'
+inputs:
+  packages:
+    required: false
+    description: 'additional packages to install in chroot'
+  version:
+    required: false
+    description: 'alpine linux version to use'
+    default: '0.13.0'
+  arch:
+    required: false
+    description: 'architecture'
+    default: '$PWD'
+  chroot_dir:
+    required: false
+    description: 'root dir for chroot environment'
+    default: '/alpine'
+  mount:
+    required: false
+    description: 'mount this directory in chroot'
+    default: '$PWD/alpine'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
