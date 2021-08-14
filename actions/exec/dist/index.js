@@ -37,8 +37,7 @@ const run_cmd = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const lines = raw_cmd.split(/\n/);
         yield Promise.all(lines.map(line => {
-            const cmd = line.split(/\s/);
-            return exec.exec(`${chroot_dir}/enter-chroot -u ${user} ${cmd}`);
+            return exec.exec(`${chroot_dir}/enter-chroot -u ${user} ${line}`);
         }));
     }
     catch (error) {
