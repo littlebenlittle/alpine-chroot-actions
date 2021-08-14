@@ -40,7 +40,9 @@ const run_cmd = () => __awaiter(void 0, void 0, void 0, function* () {
             const cmd = line.split(/\s/);
             return `${chroot_dir}/enter-chroot -u ${user} ${cmd}`;
         });
+        console.log(lines);
         for (const cmd in cmds) {
+            console.log(cmd);
             yield exec.exec(cmd);
         }
     }
