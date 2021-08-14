@@ -62,7 +62,7 @@ const install = () => __awaiter(void 0, void 0, void 0, function* () {
             mount = (yield exec.getExecOutput("pwd")).stdout;
         }
         yield exec.exec(`mkdir -p ${mount}`);
-        yield exec.exec(`${installer} -a ${arch} -d ${chroot_dir} -i ${mount}`);
+        yield exec.exec(`sudo ${installer} -a ${arch} -d ${chroot_dir} -i ${mount}`);
         yield exec.exec(`${chroot_dir}/enter-chroot apk add ${packages}`);
         yield exec.exec(`${chroot_dir}/enter-chroot adduser -D ${user}`);
     }
