@@ -34,7 +34,7 @@ const install = async () => {
 			mount = (await exec.getExecOutput("pwd")).stdout;
 		}
 		await exec.exec(`mkdir -p ${mount}`);
-		await exec.exec(`${installer} -a ${arch} -d ${chroot_dir} -i ${mount}`);
+		await exec.exec(`sudo ${installer} -a ${arch} -d ${chroot_dir} -i ${mount}`);
 		await exec.exec(`${chroot_dir}/enter-chroot apk add ${packages}`);
 		await exec.exec(`${chroot_dir}/enter-chroot adduser -D ${user}`);
 	} catch (error) {
