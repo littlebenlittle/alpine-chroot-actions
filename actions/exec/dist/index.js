@@ -33,19 +33,16 @@ const exec = __importStar(require("@actions/exec"));
 const chroot_dir = core.getInput("chroot_dir");
 const user = core.getInput("user");
 const raw_cmd = core.getInput("cmd");
-const chroot_exec = () => __awaiter(void 0, void 0, void 0, function* () {
-    const lines = raw_cmd.split(/\n/);
-    const cmds = lines.map(line => {
-        const cmd = line.split(/\s/);
-        return `${chroot_dir}/enter-chroot -u ${user} ${cmd}`;
-    });
-    for (const cmd in cmds) {
-        yield exec.exec(cmd);
-    }
-});
 const run_cmd = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        chroot_exec();
+        const lines = raw_cmd.split(/\n/);
+        const cmds = lines.map(line => {
+            const cmd = line.split(/\s/);
+            return `${chroot_dir}/enter-chroot -u ${user} ${cmd}`;
+        });
+        for (const cmd in cmds) {
+            yield exec.exec(cmd);
+        }
     }
     catch (error) {
         core.setFailed(error);

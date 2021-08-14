@@ -40,12 +40,6 @@ const chmod = util_1.promisify(fs_1.default.chmod);
 const exists = util_1.promisify(fs_1.default.exists);
 const chroot_dir = core.getInput("chroot_dir");
 const user = core.getInput("user");
-const chroot_exec = (user = "user", cmd = []) => __awaiter(void 0, void 0, void 0, function* () {
-    if (user !== "root") {
-        cmd = ["-u", user, ...cmd];
-    }
-    return yield exec.exec(`${chroot_dir}/enter-chroot`, cmd);
-});
 const packages = core.getInput("packages");
 const alpine_version = core.getInput("alpine_version");
 const arch = core.getInput("arch");

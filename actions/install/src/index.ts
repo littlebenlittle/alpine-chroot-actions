@@ -10,13 +10,6 @@ const exists = promisify(promises.exists);
 const chroot_dir = core.getInput("chroot_dir");
 const user = core.getInput("user");
 
-const chroot_exec = async (user: string = "user", cmd: string[] = []): Promise<number> => {
-	if (user !== "root") {
-		cmd = ["-u", user, ...cmd];
-	}
-	return await exec.exec(`${chroot_dir}/enter-chroot`, cmd);
-};
-
 const packages = core.getInput("packages");
 const alpine_version = core.getInput("alpine_version");
 const arch = core.getInput("arch");
