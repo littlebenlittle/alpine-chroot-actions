@@ -9,8 +9,7 @@ const run_cmd = async () => {
 	try {
 		const lines = raw_cmd.split(/\n/);
 		await Promise.all(lines.map(line => {
-			const cmd = line.split(/\s/);
-			return exec.exec(`${chroot_dir}/enter-chroot -u ${user} ${cmd}`)
+			return exec.exec(`${chroot_dir}/enter-chroot -u ${user} ${line}`)
 		}));
 	} catch (error) {
 		core.setFailed(error);
