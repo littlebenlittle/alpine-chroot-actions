@@ -3,14 +3,14 @@ import * as exec from '@actions/exec';
 
 const chroot_dir = core.getInput("chroot_dir");
 const user = core.getInput("user");
-const raw_cmd = core.getInput("cmd");
+const cmd = core.getInput("cmd");
 
 const run_cmd = async () => {
 	try {
-		const lines = raw_cmd.split(/\n/);
-		await Promise.all(lines.map(line => {
-			return exec.exec(`${chroot_dir}/enter-chroot -u ${user} ${line}`)
-		}));
+		if (user !== "root") {
+			return exec.exec(`${chroot_dir}/enter-chroot -u ${user} ${cmd}`);
+		}
+		return exec.exec(`${chroot_dir}/enter-chroot ${cmd}`);
 	} catch (error) {
 		core.setFailed(error);
 	}
