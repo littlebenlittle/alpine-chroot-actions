@@ -36,15 +36,10 @@ const raw_cmd = core.getInput("cmd");
 const run_cmd = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const lines = raw_cmd.split(/\n/);
-        const cmds = lines.map(line => {
+        yield Promise.all(lines.map(line => {
             const cmd = line.split(/\s/);
-            return `${chroot_dir}/enter-chroot -u ${user} ${cmd}`;
-        });
-        console.log(lines);
-        for (const cmd in cmds) {
-            console.log(cmd);
-            yield exec.exec(cmd);
-        }
+            return exec.exec(`${chroot_dir}/enter-chroot -u ${user} ${cmd}`);
+        }));
     }
     catch (error) {
         core.setFailed(error);
