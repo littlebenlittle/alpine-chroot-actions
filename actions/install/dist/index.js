@@ -46,30 +46,28 @@ const chroot_exec = (user = "user", cmd = []) => __awaiter(void 0, void 0, void 
     }
     return yield exec.exec(`${chroot_dir}/enter-chroot`, cmd);
 });
-const packages = core.getInput("packages").split(/\s/);
+const packages = core.getInput("packages");
 const alpine_version = core.getInput("alpine_version");
-const mount = core.getInput("mount");
 const arch = core.getInput("arch");
 const install = () => __awaiter(void 0, void 0, void 0, function* () {
-    if (yield exists(chroot_dir)) {
-        console.log("chroot_dir already exists; not doing anything!");
-        return;
+    try {
+        if (yield exists(chroot_dir)) {
+            console.log("chroot_dir already exists; not doing anything!");
+            return;
+        }
+        const installer = yield tc.downloadTool(`https://raw.githubusercontent.com/alpinelinux/alpine-chroot-install/v${alpine_version}/alpine-chroot-install`);
+        yield chmod(installer, 0o755);
+        let mount = core.getInput("mount");
+        if (!mount) {
+            mount = (yield exec.getExecOutput("pwd")).stdout;
+        }
+        yield exec.exec(`mkdir -p ${mount}`);
+        yield exec.exec(`${installer} -a ${arch} -d ${chroot_dir} -i ${mount}`);
+        yield exec.exec(`${chroot_dir}/enter-chroot apk add ${packages}`);
+        yield exec.exec(`${chroot_dir}/enter-chroot adduser -D ${user}`);
     }
-    const installer = yield tc.downloadTool(`https://raw.githubusercontent.com/alpinelinux/alpine-chroot-install/v${alpine_version}/alpine-chroot-install`);
-    yield chmod(installer, 0o755);
-    yield exec.exec("mkdir", ["-p", mount]);
-    yield exec.exec("sudo", [
-        installer,
-        "-a", arch,
-        "-d", chroot_dir,
-        "-i", mount,
-    ]);
-    yield chroot_exec("root", ["apk", "add", ...packages]);
-    yield chroot_exec("root", ["adduser", "-D", user]);
+    catch (error) {
+        core.setFailed(error);
+    }
 });
-try {
-    install();
-}
-catch (error) {
-    core.setFailed(error);
-}
+install();

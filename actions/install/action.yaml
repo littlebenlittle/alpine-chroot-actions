@@ -20,7 +20,6 @@ inputs:
   mount:
     required: false
     description: 'mount this directory in chroot'
-    default: '$PWD'
   user:
     required: false
     description: 'user to create in chroot environment'

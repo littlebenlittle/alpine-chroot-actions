@@ -40,15 +40,15 @@ const chroot_exec = (user = "user", cmd = []) => __awaiter(void 0, void 0, void 
     return yield exec.exec(`${chroot_dir}/enter-chroot`, cmd);
 });
 const run_cmd = () => __awaiter(void 0, void 0, void 0, function* () {
-    const lines = raw_cmd.split(/\n/);
-    lines.forEach(line => {
-        const cmd = line.split(/\s/);
-        chroot_exec(user, cmd);
-    });
+    try {
+        const lines = raw_cmd.split(/\n/);
+        lines.forEach(line => {
+            const cmd = line.split(/\s/);
+            chroot_exec(user, cmd);
+        });
+    }
+    catch (error) {
+        core.setFailed(error);
+    }
 });
-try {
-    run_cmd();
-}
-catch (error) {
-    core.setFailed(error);
-}
+run_cmd();
