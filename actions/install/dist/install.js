@@ -27,23 +27,35 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.chroot_exec = exports.user = exports.chroot_dir = exports.exists = exports.chmod = void 0;
-const core = __importStar(require("@actions/core"));
+const tc = __importStar(require("@actions/tool-cache"));
 const exec = __importStar(require("@actions/exec"));
-const fs_1 = __importDefault(require("fs"));
-const util_1 = require("util");
-exports.chmod = util_1.promisify(fs_1.default.chmod);
-exports.exists = util_1.promisify(fs_1.default.exists);
-exports.chroot_dir = core.getInput("chroot_dir");
-exports.user = core.getInput("user");
-const chroot_exec = (user = "user", cmd = []) => __awaiter(void 0, void 0, void 0, function* () {
-    if (user !== "root") {
-        cmd = ["-u", user, ...cmd];
+const core = __importStar(require("@actions/core"));
+const _1 = require(".");
+const packages = core.getInput("packages").split(/\s/);
+const alpine_version = core.getInput("alpine_version");
+const mount = core.getInput("mount");
+const arch = core.getInput("arch");
+const install = () => __awaiter(void 0, void 0, void 0, function* () {
+    if (yield _1.exists(_1.chroot_dir)) {
+        console.log("chroot_dir already exists; not doing anything!");
+        return;
     }
-    return yield exec.exec(`${exports.chroot_dir}/enter-chroot`, cmd);
+    const installer = yield tc.downloadTool(`https://raw.githubusercontent.com/alpinelinux/alpine-chroot-install/v${alpine_version}/alpine-chroot-install`);
+    yield _1.chmod(installer, 0o755);
+    yield exec.exec("mkdir", ["-p", mount]);
+    yield exec.exec("sudo", [
+        installer,
+        "-a", arch,
+        "-d", _1.chroot_dir,
+        "-i", mount,
+    ]);
+    yield _1.chroot_exec("root", ["apk", "add", ...packages]);
+    yield _1.chroot_exec("root", ["adduser", "-D", _1.user]);
 });
-exports.chroot_exec = chroot_exec;
+try {
+    install();
+}
+catch (error) {
+    core.setFailed(error);
+}

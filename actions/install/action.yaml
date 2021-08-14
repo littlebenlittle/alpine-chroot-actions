@@ -21,6 +21,10 @@ inputs:
     required: false
     description: 'mount this directory in chroot'
     default: '$PWD'
+  user:
+    required: false
+    description: 'user to create in chroot environment'
+    default: 'user'
 runs:
   using: 'node12'
   main: 'dist/index.js'

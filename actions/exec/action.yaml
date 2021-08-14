@@ -1,0 +1,18 @@
+name: 'Alpine Chroot Exec'
+description: 'run commands in an alpine chroot environment'
+author: 'ben little <ben.little@benlittle.dev>'
+inputs:
+  chroot_dir:
+    required: false
+    description: 'root dir for chroot environment'
+    default: '/alpine'
+  user:
+    required: false
+    description: 'user to exec cmd as'
+    default: 'user'
+  cmd:
+    required: true
+    description: 'command or newline-separated list of commands to run in chroot environment'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'

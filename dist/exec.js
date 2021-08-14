@@ -27,23 +27,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.chroot_exec = exports.user = exports.chroot_dir = exports.exists = exports.chmod = void 0;
 const core = __importStar(require("@actions/core"));
-const exec = __importStar(require("@actions/exec"));
-const fs_1 = __importDefault(require("fs"));
-const util_1 = require("util");
-exports.chmod = util_1.promisify(fs_1.default.chmod);
-exports.exists = util_1.promisify(fs_1.default.exists);
-exports.chroot_dir = core.getInput("chroot_dir");
-exports.user = core.getInput("user");
-const chroot_exec = (user = "user", cmd = []) => __awaiter(void 0, void 0, void 0, function* () {
-    if (user !== "root") {
-        cmd = ["-u", user, ...cmd];
-    }
-    return yield exec.exec(`${exports.chroot_dir}/enter-chroot`, cmd);
+const _1 = require(".");
+const raw_cmd = core.getInput("cmd");
+const run_cmd = () => __awaiter(void 0, void 0, void 0, function* () {
+    const lines = raw_cmd.split(/\n/);
+    lines.forEach(line => {
+        const cmd = line.split(/\s/);
+        _1.chroot_exec(_1.user, cmd);
+    });
 });
-exports.chroot_exec = chroot_exec;
+try {
+    run_cmd();
+}
+catch (error) {
+    core.setFailed(error);
+}

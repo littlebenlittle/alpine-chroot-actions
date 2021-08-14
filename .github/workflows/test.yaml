@@ -15,4 +15,7 @@ jobs:
         with:
           node-version: '14'
       - run: npm install
-      - uses: ./
+      - uses: ./actions/install
+      - uses: ./actions/exec
+        with:
+          cmd: echo hello world
