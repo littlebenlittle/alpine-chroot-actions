@@ -8,9 +8,9 @@ const cmd = core.getInput("cmd");
 const run_cmd = async () => {
 	try {
 		if (user !== "root") {
-			return exec.exec(`${chroot_dir}/enter-chroot -u ${user} ${cmd}`);
+			return await exec.exec(`${chroot_dir}/enter-chroot -u ${user} ${cmd}`);
 		}
-		return exec.exec(`${chroot_dir}/enter-chroot ${cmd}`);
+		return await exec.exec(`${chroot_dir}/enter-chroot ${cmd}`);
 	} catch (error) {
 		core.setFailed(error);
 	}

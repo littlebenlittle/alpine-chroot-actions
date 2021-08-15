@@ -36,9 +36,9 @@ const cmd = core.getInput("cmd");
 const run_cmd = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (user !== "root") {
-            return exec.exec(`${chroot_dir}/enter-chroot -u ${user} ${cmd}`);
+            return yield exec.exec(`${chroot_dir}/enter-chroot -u ${user} ${cmd}`);
         }
-        return exec.exec(`${chroot_dir}/enter-chroot ${cmd}`);
+        return yield exec.exec(`${chroot_dir}/enter-chroot ${cmd}`);
     }
     catch (error) {
         core.setFailed(error);
